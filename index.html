@@ -4,73 +4,141 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- tailwind cdn -->
+    <link
+      href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <!-- tailwind cdn -->
     <title>Break even tool</title>
     <!-- styles in html for easier updating -->
     <style>
-      input {
-        display: block;
-        margin-bottom: 10px;
+      body {
+        font-family: "Century Gothic", sans-serif;
       }
     </style>
     <!-- end of style tag -->
   </head>
-  <body>
+  <body class="bg-gray-100">
+    <header class="flex px-8 py-3 h-16 shadow-lg">
+      <img
+        src="https://upload.wikimedia.org/wikipedia/en/thumb/a/ac/Flex_logo_%282015%29.svg/640px-Flex_logo_%282015%29.svg.png"
+        alt="Flex logo"
+        class="header__logo"
+      />
+      <ul class="flex flex-auto justify-end items-center text-sm">
+        <li class="pl-4 hover:underline">
+          <a
+            href="https://flextronics365.sharepoint.com/sites/additivemanufacturing"
+            >Flex Additive Home Page</a
+          >
+        </li>
+        <li class="pl-4 hover:underline">
+          <a
+            href="https://flextronics365.sharepoint.com/sites/aminstantquoting/"
+            >Flex Additive Instant quoting tool</a
+          >
+        </li>
+        <li class="pl-4 hover:underline">
+          <a
+            href="https://apps.powerapps.com/play/daa6a785-3ff2-4779-8743-520fecd48ea4?tenantId=3f0e69e0-eb38-4eb2-b4ee-52919719d31e?l=en-us"
+            >Flex Additive Manufacturing Digital Catalog</a
+          >
+        </li>
+      </ul>
+    </header>
+    <main class="max-w-screen-lg mx-auto pt-8">
+      <h1 class="mb-8 text-center text-5xl font-bold">Break Even Tool</h1>
+      <!-- Input form section -->
+      <form class="grid grid-cols-3 place-content-center mb-8">
+        <!-- tooling cost -->
+        <div class="m-4">
+          <label for="tooling-cost" class="block text-xs mb-2"
+            >Tooling cost</label
+          >
+          <span>$</span>
+          <input
+            class="w-11/12"
+            type="number"
+            id="tooling-cost"
+            name="tooling-cost"
+            min="1"
+            placeholder="Price in usd"
+            step="0.01"
+          />
+        </div class="m-4"> 
+        <!-- injection cost -->
+        <div class="m-4">
+          <label for="injection-cost" class="block text-xs mb-2"
+            >Injection cost</label
+          >
+          <span>$</span>
+          <input
+            class="w-11/12"
+            type="number"
+            id="injection-cost"
+            name="injection-cost"
+            min="1"
+            placeholder="Price in usd"
+            step="0.01"
+          />
+        </div>
+        <!-- mjf cost -->
+        <div class="m-4">
+          <label for="mjf-cost" class="block text-xs mb-2">MJF cost</label>
+          <span>$</span>
+          <input
+            class="w-11/12"
+            type="number"
+            id="mjf-cost"
+            name="mjf-cost"
+            min="1"
+            placeholder="Price in usd"
+            step="0.01"
+          />
+        </div>
+        <!-- Parts per period -->
+        <div class="m-4">
+          <label for="parts-period" class="block text-xs mb-2"
+            >Manufactured parts per period</label
+          >
+          <input
+            class="w-11/12"
+            type="number"
+            id="parts-period"
+            name="parts-period"
+            min="10"
+            placeholder="Manufactured parts per period"
+            step="1"
+          />
+        </div>
+        <!-- Months of period -->
+        <div class="m-4">
+          <label for="time-period" class="block text-xs mb-2"
+            >Time span for the injection molding</label
+          >
+          <input
+            class="w-11/12"
+            type="number"
+            id="time-period"
+            name="time-period"
+            min="1"
+            placeholder="Time span in months"
+            step="1"
+          />
+        </div>
+        <input 
+        class="col-start-2 place-self-center m-4 h-6 w-3/4"
+        type="button" value="Find break-even" id="submit-btn" />
+      </form>
+      <!-- chart render section -->
+      <div class="w-3/4 mx-auto">
+        <canvas id="chart" width="400" height="250"></canvas>
+      </div>
+      <!--  -->
+    </main>
     <!--  -->
-    <form class="input-form">
-      <label for="tooling-cost">Tooling cost</label>
-      <span>$</span>
-      <input
-        type="number"
-        id="tooling-cost"
-        name="tooling-cost"
-        min="1"
-        placeholder="Price in usd"
-        step="0.01"
-      />
-      <label for="injection-cost">Injection cost</label>
-      <span>$</span>
-      <input
-        type="number"
-        id="injection-cost"
-        name="injection-cost"
-        min="1"
-        placeholder="Price in usd"
-        step="0.01"
-      />
-      <label for="mjf-cost">MJF cost</label>
-      <span>$</span>
-      <input
-        type="number"
-        id="mjf-cost"
-        name="mjf-cost"
-        min="1"
-        placeholder="Price in usd"
-        step="0.01"
-      />
-      <label for="parts-period">Manufactured parts per period</label>
-      <input
-        type="number"
-        id="parts-period"
-        name="parts-period"
-        min="10"
-        placeholder="Manufactured parts per period"
-        step="1"
-      />
-      <label for="time-period">Time span for the injection molding</label>
-      <input
-        type="number"
-        id="time-period"
-        name="time-period"
-        min="1"
-        placeholder="Time span in months"
-        step="1"
-      />
-      <input type="button" value="Find break-even" id="submit-btn" />
-    </form>
-    <div class="chart-container">
-      <canvas id="chart" width="400" height="250"></canvas>
-    </div>
-    <!--  -->
+
     <!-- chartJS scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- end of chartJS scripts -->
