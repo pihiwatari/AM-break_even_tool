@@ -19,7 +19,7 @@
     </style>
     <!-- end of style tag -->
   </head>
-  <body class="bg-gray-100">
+  <body class="bg-gray-100 text-gray-700">
     <header class="flex px-8 py-3 h-16 shadow-lg">
       <img
         src="https://upload.wikimedia.org/wikipedia/en/thumb/a/ac/Flex_logo_%282015%29.svg/640px-Flex_logo_%282015%29.svg.png"
@@ -36,7 +36,7 @@
         <li class="pl-4 hover:underline">
           <a
             href="https://flextronics365.sharepoint.com/sites/aminstantquoting/"
-            >Flex Additive Instant quoting tool</a
+            >Flex Additive Instant Quoting Tool</a
           >
         </li>
         <li class="pl-4 hover:underline">
@@ -47,8 +47,18 @@
         </li>
       </ul>
     </header>
-    <main class="max-w-screen-lg mx-auto pt-8">
-      <h1 class="mb-8 text-center text-5xl font-bold">Break Even Tool</h1>
+    <main class="max-w-screen-lg mx-auto pt-8 mb-16">
+      <!-- tool's title -->
+      <h1 class="mb-8 text-center text-5xl font-bold">
+        3D Printing Break Even Tool
+      </h1>
+      <!-- description of the tool -->
+      <h3 class="w-3/4 mx-auto mb-8">
+        If you’re considering using 3D printing as an alternative to injection
+        molding, our comparison tool will be able to help you make the right
+        choice. Discover how many parts can be printed before injection molding
+        becomes a better option.
+      </h3>
       <!-- Input form section -->
       <form class="grid grid-cols-3 place-content-center mb-8">
         <!-- tooling cost -->
@@ -66,11 +76,11 @@
             placeholder="Price in usd"
             step="0.01"
           />
-        </div class="m-4"> 
+        </div>
         <!-- injection cost -->
         <div class="m-4">
           <label for="injection-cost" class="block text-xs mb-2"
-            >Injection cost</label
+            >Injection cost per part</label
           >
           <span>$</span>
           <input
@@ -85,7 +95,9 @@
         </div>
         <!-- mjf cost -->
         <div class="m-4">
-          <label for="mjf-cost" class="block text-xs mb-2">MJF cost</label>
+          <label for="mjf-cost" class="block text-xs mb-2"
+            >3D print cost per part</label
+          >
           <span>$</span>
           <input
             class="w-11/12"
@@ -100,7 +112,7 @@
         <!-- Parts per period -->
         <div class="m-4">
           <label for="parts-period" class="block text-xs mb-2"
-            >Manufactured parts per period</label
+            >Manufactured parts per month</label
           >
           <input
             class="w-11/12"
@@ -115,7 +127,7 @@
         <!-- Months of period -->
         <div class="m-4">
           <label for="time-period" class="block text-xs mb-2"
-            >Time span for the injection molding</label
+            >Time span (in months) for the injection molding</label
           >
           <input
             class="w-11/12"
@@ -127,9 +139,12 @@
             step="1"
           />
         </div>
-        <input 
-        class="col-start-2 place-self-center m-4 h-6 w-3/4"
-        type="button" value="Find break-even" id="submit-btn" />
+        <input
+          class="col-start-2 place-self-center m-4 h-8 w-3/4 rounded-md text-white bg-blue-500"
+          type="button"
+          value="Find break-even point"
+          id="submit-btn"
+        />
       </form>
       <!-- chart render section -->
       <div class="w-3/4 mx-auto">
@@ -137,6 +152,18 @@
       </div>
       <!--  -->
     </main>
+    <footer
+      class="fixed bottom-0 left-0 right-0 flex items-center h-14 bg-gray-700"
+    >
+      <div class="max-w-screen-lg mx-auto w-full">
+        <p class="text-white text-sm">
+          Report any bugs to
+          <a href="mailto:elias.rayas@flex.com" class="underline"
+            >Elias.Rayas@flex.com</a
+          >
+        </p>
+      </div>
+    </footer>
     <!--  -->
 
     <!-- chartJS scripts -->
@@ -199,7 +226,7 @@
         return Number(toolingCost / (MJFCost - injectionCost));
       }
 
-      //fucntion to create a molding chart
+      //fucntion to create a breakEven chart
       function breakEvenChart(ctx, chartData) {
         //we create a new chart object
         const chart = new Chart(ctx, {
@@ -208,22 +235,6 @@
             //period of time
             labels: chartData.partsOverTime,
             datasets: [
-              {
-                //mjf costs
-                type: "line",
-                label: "Cost per part: MJF",
-                data: chartData.MJFCost,
-                borderColor: "rgba(255, 159, 64, 1)",
-                // borderWidth: 0,
-                pointRadius: 0,
-                hitRadius: 0,
-              },
-              {
-                //Injection part costs
-                type: "line",
-                label: "Injection molding cost per part",
-                data: chartData.injectionCost,
-              },
               {
                 //breakeven point
                 type: "scatter",
@@ -235,23 +246,79 @@
                   },
                 ],
                 borderColor: "rgba(255, 50, 64, 1)",
+                backgroundColor: "rgba(255, 50, 64, 1)",
+                tooltip: {
+                  //formatting callback to include additional texts
+                  callbacks: {
+                    label: function (context) {
+                      context.label = {
+                        x: context.parsed.x.toFixed(0) + " parts",
+                        y: "$" + context.parsed.y.toFixed(2),
+                      };
+                      return `Break even is reached at ${context.label.x}, costing ${context.label.y} each. `;
+                    },
+                  },
+                },
+              },
+              {
+                //mjf costs
+                type: "line",
+                label: "3D printing cost per part",
+                data: chartData.MJFCost,
+                borderColor: "rgba(255, 159, 64, 1)",
+                backgroundColor: "rgba(255, 159, 64, 1)",
+                pointRadius: 0,
+                hitRadius: 0,
+              },
+              {
+                //Injection part costs
+                type: "line",
+                label: "Injection molding cost per part",
+                data: chartData.injectionCost,
+
+                //styling for this chartData
+                borderColor: "rgba(59,130,246,1)",
+                backgroundColor: "rgba(59,130,246,.2)",
+                fill: true,
+
+                //formatting popup tooltips
+                tooltip: {
+                  callbacks: {
+                    label: function (context) {
+                      return [
+                        `Injected parts: ${context.label}.`,
+                        `Cost per part: \$${context.formattedValue}.`,
+                      ];
+                    },
+                  },
+                },
               },
             ],
           },
           options: {
             scales: {
               x: {
-                beginAtZero: true,
                 title: {
                   display: true,
-                  text: "Injected parts per period",
+                  text: "Injected parts over a period of 3 months",
                 },
               },
               y: {
-                beginAtZero: true,
                 title: {
                   display: true,
-                  text: "Price in USD",
+                  text: "Cost in USD",
+                },
+              },
+            },
+            plugins: {
+              title: {
+                display: true,
+                text:
+                  "Comparison of cost per injection molded part and 3D printing ",
+                font: {
+                  family: "Century Gothic",
+                  size: 18,
+                  weight: "normal",
                 },
               },
             },
@@ -260,6 +327,7 @@
         return chart;
       }
 
+      //function to render the chart on the canvas
       function renderCharts() {
         const ctx = document.querySelector("#chart").getContext("2d");
         return breakEvenChart(ctx, initialChartData);
@@ -318,17 +386,20 @@
         //update labels
         chart.data.labels = chartData.partsOverTimeArray;
 
-        //update mjf cost
-        chart.data.datasets[0].data = chartData.MJFCostArray;
-
-        //update injection cost per part
-        chart.data.datasets[1].data = chartData.injectionCostArray;
-
         //update the break even point
-        chart.data.datasets[2].data[0] = {
+        chart.data.datasets[0].data[0] = {
           x: chartData.breakEvenPoint,
           y: chartData.MJFCost,
         };
+        //update mjf cost
+        chart.data.datasets[1].data = chartData.MJFCostArray;
+
+        //update injection cost per part
+        chart.data.datasets[2].data = chartData.injectionCostArray;
+
+        //update scale x label description
+        chart.options.scales.x.title.text =
+          "Injected parts over a period of " + chartData.months + " months";
 
         //update chart data
         chart.update();
@@ -341,6 +412,37 @@
       $updateBtn.addEventListener("click", () => {
         dynamicChartData = updateChartData();
         updateChartProps(BEChart, dynamicChartData);
+      });
+
+      $toolingCost.addEventListener("keydown", (e) => {
+        if (e.keyCode == 13) {
+          dynamicChartData = updateChartData();
+          updateChartProps(BEChart, dynamicChartData);
+        }
+      });
+      $injectionCost.addEventListener("keydown", (e) => {
+        if (e.keyCode == 13) {
+          dynamicChartData = updateChartData();
+          updateChartProps(BEChart, dynamicChartData);
+        }
+      });
+      $MJFCost.addEventListener("keydown", (e) => {
+        if (e.keyCode == 13) {
+          dynamicChartData = updateChartData();
+          updateChartProps(BEChart, dynamicChartData);
+        }
+      });
+      $injectedPartsPerPeriod.addEventListener("keydown", (e) => {
+        if (e.keyCode == 13) {
+          dynamicChartData = updateChartData();
+          updateChartProps(BEChart, dynamicChartData);
+        }
+      });
+      $timePeriod.addEventListener("keydown", (e) => {
+        if (e.keyCode == 13) {
+          dynamicChartData = updateChartData();
+          updateChartProps(BEChart, dynamicChartData);
+        }
       });
 
       //
