@@ -54,7 +54,7 @@
       </h1>
       <!-- description of the tool -->
       <h3 class="w-3/4 mx-auto mb-8">
-        If you’re considering using 3D printing as an alternative to injection
+        If you're considering using 3D printing as an alternative to injection
         molding, our comparison tool will be able to help you make the right
         choice. Discover how many parts can be printed before injection molding
         becomes a better option.
@@ -196,7 +196,7 @@
       //create an array from a period of time
       function createPeriodOfTime(range) {
         let rangeList = [];
-        for (let i = 1; i < range + 1; i++) {
+        for (let i = 0; i < range + 1; i++) {
           rangeList.push(i);
         }
         return rangeList;
@@ -205,7 +205,7 @@
       //increase injected part qty by the amount of periods (injected parts * period)
       function injectedPartsOverTime(range, injectedParts) {
         let partsArray = [];
-        for (let i = 1; i < range + 1; i++) {
+        for (let i = 0; i < range + 1; i++) {
           partsArray.push(i * injectedParts);
         }
         return partsArray;
@@ -218,6 +218,9 @@
         injectedParts,
         costPerPart
       ) {
+        if (injectedParts == 0) {
+          return toolingCost;
+        }
         return (injectedParts * costPerPart + toolingCost) / injectedParts;
       }
 
@@ -226,6 +229,7 @@
         return Number(toolingCost / (MJFCost - injectionCost));
       }
 
+      //---CHART IS CREATED HERE---//
       //fucntion to create a breakEven chart
       function breakEvenChart(ctx, chartData) {
         //we create a new chart object
@@ -302,8 +306,10 @@
                   display: true,
                   text: "Injected parts over a period of 3 months",
                 },
+                bounds: "data",
               },
               y: {
+                type: "logarithmic",
                 title: {
                   display: true,
                   text: "Cost in USD",
@@ -401,6 +407,12 @@
         chart.options.scales.x.title.text =
           "Injected parts over a period of " + chartData.months + " months";
 
+        //update scale x stepsize
+        // chart.options.scales.x.ticks.stepSize = chartData.partsOverTime;
+
+        //setup max scale for y axis
+        // chart.options.scales.y.max = chartData.MJFCost * 1.2;
+
         //update chart data
         chart.update();
       }
@@ -414,37 +426,20 @@
         updateChartProps(BEChart, dynamicChartData);
       });
 
-      $toolingCost.addEventListener("keydown", (e) => {
-        if (e.keyCode == 13) {
-          dynamicChartData = updateChartData();
-          updateChartProps(BEChart, dynamicChartData);
-        }
+      [
+        $toolingCost,
+        $injectionCost,
+        $MJFCost,
+        $injectedPartsPerPeriod,
+        $timePeriod,
+      ].forEach((item) => {
+        item.addEventListener("keydown", (e) => {
+          if (e.keyCode == 13) {
+            dynamicChartData = updateChartData();
+            updateChartProps(BEChart, dynamicChartData);
+          }
+        });
       });
-      $injectionCost.addEventListener("keydown", (e) => {
-        if (e.keyCode == 13) {
-          dynamicChartData = updateChartData();
-          updateChartProps(BEChart, dynamicChartData);
-        }
-      });
-      $MJFCost.addEventListener("keydown", (e) => {
-        if (e.keyCode == 13) {
-          dynamicChartData = updateChartData();
-          updateChartProps(BEChart, dynamicChartData);
-        }
-      });
-      $injectedPartsPerPeriod.addEventListener("keydown", (e) => {
-        if (e.keyCode == 13) {
-          dynamicChartData = updateChartData();
-          updateChartProps(BEChart, dynamicChartData);
-        }
-      });
-      $timePeriod.addEventListener("keydown", (e) => {
-        if (e.keyCode == 13) {
-          dynamicChartData = updateChartData();
-          updateChartProps(BEChart, dynamicChartData);
-        }
-      });
-
       //
     </script>
   </body>
