@@ -18,6 +18,7 @@
       }
       .clicked:active {
         transform: translateY(0.1rem);
+        background-color: lightseagreen;
       }
     </style>
     <!-- end of style tag -->
@@ -165,7 +166,7 @@
             text-white
             bg-blue-500
             cursor-pointer
-            hover:bg-blue-700
+            hover:bg-blue-600
           "
           type="button"
           value="Find break-even point"
